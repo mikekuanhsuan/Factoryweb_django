@@ -1,0 +1,100 @@
+{% extends "shared/_LoginLayout.html" %}
+{% load static %}
+
+{% block title %}LoginList{% endblock %}
+
+{% block content %}
+<div class="login-box">
+    <div class="login-logo">
+        <img src="{% static 'images/Cmark.png' %}" style="max-width: 40px; margin-right: 10px; vertical-align: middle;">
+        <label style="vertical-align: middle;">晉</label>
+        <img src="{% static 'images/Cmark.png' %}" style="max-width: 40px; margin-right: 10px; vertical-align: middle;">
+        <label style="vertical-align: middle;">瑜</label>
+        <img src="{% static 'images/Cmark.png' %}" style="max-width: 40px; margin-right: 10px; vertical-align: middle;">
+    </div>
+    <!-- /.login-logo -->
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">登入</p>
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input id="txtEmail" name="account" type="email" class="form-control" placeholder="帳號">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="input-group mb-3">
+                    <input id="txtPassword" name="password" type="password" class="form-control" placeholder="密碼">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="social-auth-links text-center mb-3">
+                    <div class="">
+                        <button id="btnSend" type="submit" class="btn btn-primary btn-block">Sign In</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+                <!-- /.social-auth-links -->
+
+        </div>
+        <!-- /.login-card-body -->
+    </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<link rel="stylesheet" href="{% static 'lib/sweetalert2/sweetalert2.min.css' %}">
+<script src="{% static 'lib/sweetalert2/sweetalert2.min.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        
+        $('#btnSend').click(function(event) {
+                
+            event.preventDefault();  // 阻止表单默认提交行为
+            
+            var account = $('#txtEmail').val();  // 获取帐号输入框的值
+            var password = $('#txtPassword').val();  // 获取密码输入框的值
+           
+            var jsonData = {
+                'Account': account,
+                'Password': password
+            };
+            
+            $.ajax({
+                url: '/my-view/',  // 将URL替换为后端处理数据的实际URL
+                type: 'POST',
+                
+                data: JSON.stringify(jsonData),  // 将数据转换为JSON字符串
+                
+                contentType: 'application/json',  // 设置请求头的Content-Type为application/json
+                success: function(response) {
+                    console.log(response.success)
+                    if (response.success) {
+                        
+                        // 数据发送成功，进行相关处理
+                        $('#result').text('数据发送成功');
+                        window.location.href = '/home/Index/'; // 跳转到'factories'路径
+                        
+
+                    } else {
+                        // 数据发送失败，处理错误
+                        // $('#result').text('数据发送失败：' + response.error);
+                        Swal.fire({
+                                icon: 'error',
+                                title: 'AD不通過(密碼錯誤)!',
+                            })
+
+                    }
+                }
+            });
+ 
+        });
+    });
+
+</script>
+{% endblock %}

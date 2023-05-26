@@ -1,0 +1,44 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>晉瑜 | Log in</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link href="{% static 'lib/fontawesome-free/css/all.min.css' %}" rel="stylesheet" />
+    <!-- Theme style -->
+    <link href="{% static 'css/adminlte.min.css' %}" rel="stylesheet" />
+
+    {% block css %}
+    {% endblock %}
+</head>
+<body class="hold-transition login-page">
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- /.login-box -->
+    <!-- jQuery -->
+    <script src="{% static 'lib/jquery/jquery.min.js' %}"></script>
+    <!-- Bootstrap 4 -->
+    <script src="{% static 'lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'js/adminlte.min.js' %}"></script>
+
+    {% block scripts %}
+    <script>
+        var account = "{{ request.session.Account }}";
+        console.log("Session--" + account);
+    </script>
+    {% endblock %}
+
+
+
+
+</body>
+</html>

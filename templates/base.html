@@ -1,0 +1,498 @@
+{% load static %}
+{% load tz %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>晉瑜</title>
+    <link rel="icon" href="{% static 'images/companyicon.ico' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'images/companyicon.ico' %}" type="image/x-icon">
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link href="{% static 'lib/fontawesome-free/css/all.min.css' %}" rel="stylesheet" />
+    <!-- IonIcons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link href="{% static 'css/adminlte.min.css' %}" rel="stylesheet" />
+
+    <!-- DataTables -->
+    <link href="{% static 'lib/datatables-bs4/css/datatables.bootstrap4.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'lib/datatables-responsive/css/responsive.bootstrap4.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'lib/datatables-buttons/css/buttons.bootstrap4.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'lib/datatables-fixedcolumns/css/fixedColumns.bootstrap4.min.css' %}" rel="stylesheet" />
+
+    {% block css %}{% endblock %}  <!-- 其他頁面可以插入自己的CSS樣式 -->
+
+    <style>
+        .text-center {
+            display: block; /* 將元素轉換為區塊元素 */
+            margin-right: 50px;
+        }
+    </style>
+</head>
+<body class="sidebar-mini" style="height:auto;">
+    <div class="wrapper">
+        <!-- Navbar -->
+        <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+            <!-- Left navbar links 中上方-->
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" data-widget="pushmenu" href="#" >
+                        <i class="fas fa-bars"></i>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    {% comment %}
+                    <a class="nav-link" data-slide="true" href="{% url 'log_out' %}">
+                        <i class="fas fa-sign-out-alt"></i> 登出
+                    </a>
+                    {% endcomment %}
+                </li>
+            </ul>
+        </nav>
+        <!-- /.navbar -->
+
+        <!-- Main Sidebar Container -->
+        <aside class="main-sidebar sidebar-dark-primary elevation-4">
+            <!-- Brand Logo -->
+            <a href="/home/index" class="brand-link">
+                <img src="{% static 'images/companyicon.png' %}" alt="晉瑜" class="brand-image img-circle elevation-3" style="opacity: .8">
+                <span class="brand-text font-weight-light text-center">晉瑜</span>
+            </a>
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Sidebar user panel (optional) -->
+            
+
+                <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                    <a href="#" class="d-block">{{ account }}</a>
+                </div>
+
+                 <!-- Sidebar Menu -->
+                 <nav class="mt-2">
+                    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+                        <li class="nav-item" name="admin" >
+                            <a href="/Admin/User_list" class="nav-link">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>
+                                    權限管理
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/Admin/Role_apply" class="nav-link">
+                                <i class="nav-icon fas fa-edit"></i>
+                                <p>
+                                    權限申請
+                                </p>
+                            </a>
+                        </li>
+                        {% comment %} 觀音廠 {% endcomment %}
+                        <li class="nav-item" name="KY-T1HIST" >
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy "></i>
+                                <p>
+                                    觀音廠
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item" name="KY-tPower" >
+                                    <a href="/TotalPower/TotalPowerShow?factoryId=KY-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>總電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="KY-PowerList" >
+                                    <a href="/Power/PowerList?factory=KY-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>用電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="KY-AirCompList" >
+                                    <a href="/AirComp/AirCompList?factory=KY-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>空壓機</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="KY-Mill" >
+                                    <a href="{% url 'Mill' day='2023-05-12' millId='#1#2' factoryId='KY-T1HIST' %}" class="nav-link">
+
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>磨機日報</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="KY-MachineMain" >
+                                    <a href="/MachineMain/car_History?factoryId=KY-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>發貨管理</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% comment %} 八里廠 {% endcomment %}
+                        <li class="nav-item" name="BL-T1HIST" >
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy "></i>
+                                <p>
+                                    八里廠
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item" name="BL-tPower" >
+                                    <a href="/TotalPower/TotalPowerShow?factoryId=BL-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>總電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="BL-PowerList" >
+                                    <a href="/Power/PowerList?factory=BL-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>用電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="BL-AirCompList" >
+                                    <a href="/AirComp/AirCompList?factory=BL-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>空壓機</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="BL-Mill" >
+                                    <a href="/Mill/Mill_Report?factoryId=BL-T1HIST&day=@DateTime.Now.ToString("yyy-MM-dd")&millId=%231%232" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>磨機日報</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="BL-MachineMain" >
+                                    <a href="/MachineMain/car_History?factoryId=BL-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>發貨管理</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% comment %} 全興廠 {% endcomment %}
+                        <li class="nav-item" name="QX-T1HIST" >
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy "></i>
+                                <p>
+                                    全興廠
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item" name="QX-tPower" >
+                                    <a href="/TotalPower/TotalPowerShow?factoryId=QX-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>總電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="QX-PowerList" >
+                                    <a href="/Power/PowerList?factory=QX-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>用電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="QX-AirCompList" >
+                                    <a href="/AirComp/AirCompList?factory=QX-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>空壓機</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="QX-Mill" >
+                                    <a href="/Mill/Mill_Report?factoryId=QX-T1HIST&day=@DateTime.Now.ToString("yyy-MM-dd")&millId=%231" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>磨機日報</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="QX-MachineMain" >
+                                    <a href="/MachineMain/car_History?factoryId=QX-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>發貨管理</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% comment %} 彰濱廠 {% endcomment %}
+                        <li class="nav-item" name="ZB-T1HIST" hidden>
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy "></i>
+                                <p>
+                                    彰濱廠
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item" name="ZB-tPower" hidden>
+                                    <a href="/TotalPower/TotalPowerShow?factoryId=ZB-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>總電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="ZB-PowerList" hidden>
+                                    <a href="/Power/PowerList?factory=ZB-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>用電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="ZB-AirCompList" hidden>
+                                    <a href="/AirComp/AirCompList?factory=ZB-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>空壓機</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="ZB-Mill" hidden>
+                                    <a href="/Mill/Mill_Report?factoryId=ZB-T1HIST&day=@DateTime.Now.ToString("yyy-MM-dd")&millId=%231%232" class="nav-link">
+                           
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>磨機日報</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="ZB-MachineMain" hidden>
+                                    <a href="/MachineMain/car_History?factoryId=ZB-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>發貨管理</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        {% comment %} 高雄廠 {% endcomment %}
+                        <li class="nav-item" name="KH-PCC-LH" >
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy "></i>
+                                <p>
+                                    高雄廠
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item" name="KH-tPower" >
+                                    <a href="/TotalPower/TotalPowerShow?factoryId=KH-PCC-LH" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>總電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="KH-PowerList" >
+                                    <a href="/Power/PowerList?factory=KH-PCC-LH" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>用電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="KH-AirCompList" >
+                                    <a href="/AirComp/AirCompList?factory=KH-PCC-LH" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>空壓機</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="KH-Mill" >
+                                    <a href="/Mill/Mill_Report?factoryId=KH-PCC-LH&day=@DateTime.Now.ToString("yyy-MM-dd")&millId=%231%232" class="nav-link">
+                                       
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>磨機日報</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="KH-MachineMain" >
+                                    <a href="/MachineMain/car_History?factoryId=KH-PCC-LH" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>發貨管理</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                        {% comment %} 龍德廠 {% endcomment %}
+                        <li class="nav-item" name="LD-T1HIST" >
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy "></i>
+                                <p>
+                                    龍德廠
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item" name="LD-tPower" >
+                                    <a href="/TotalPower/TotalPowerShow?factoryId=LD-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>總電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="LD-PowerList" >
+                                    <a href="/Power/PowerList?factory=LD-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>用電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="LD-AirCompList" >
+                                    <a href="/AirComp/AirCompList?factory=LD-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>空壓機</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="LD-Mill" >
+                                    <a href="/Mill/Mill_Report?factoryId=LD-T1HIST&day=@DateTime.Now.ToString("yyy-MM-dd")&millId=%231" class="nav-link">
+                                     
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>磨機日報</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="LD-MachineMain" >
+                                    <a href="/MachineMain/car_History?factoryId=LD-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>發貨管理</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        {% comment %} 利澤廠 {% endcomment %}
+                        <li class="nav-item" name="LZ-T1HIST" >
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy "></i>
+                                <p>
+                                    利澤廠
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item" name="LZ-tPower" >
+                                    <a href="/TotalPower/TotalPowerShow?factoryId=LZ-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>總電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="LZ-PowerList" >
+                                    <a href="/Power/PowerList?factory=LZ-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>用電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="LZ-AirCompList" >
+                                    <a href="/AirComp/AirCompList?factory=LZ-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>空壓機</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="LZ-Mill" >
+                                    <a href="/Mill/Mill_Report?factoryId=LZ-T1HIST&day=@DateTime.Now.ToString("yyy-MM-dd")&millId=%231%232" class="nav-link">
+                                       
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>磨機日報</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="LZ-MachineMain" >
+                                    <a href="/MachineMain/car_History?factoryId=LZ-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>發貨管理</p>
+                                    </a>
+                                </li>
+   
+                            </ul>
+                        </li>
+                        {% comment %} 花蓮廠 {% endcomment %}
+                        <li class="nav-item" name="HL-T1HIST" >
+                            <a href="#" class="nav-link">
+                                <i class="nav-icon fas fa-copy "></i>
+                                <p>
+                                    花蓮廠
+                                    <i class="fas fa-angle-left right"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item" name="HL-tPower" >
+                                    <a href="/TotalPower/TotalPowerShow?factoryId=HL-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>總電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="HL-PowerList" >
+                                    <a href="/Power/PowerList?factory=HL-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>用電量</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="HL-AirCompList" >
+                                    <a href="/AirComp/AirCompList?factory=HL-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>空壓機</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="HL-Mill" >
+                                    <a href="/Mill/Mill_Report?factoryId=HL-T1HIST&day=@DateTime.Now.ToString("yyy-MM-dd")&millId=%231%232" class="nav-link">
+                                       
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>磨機日報</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item" name="HL-MachineMain" >
+                                    <a href="/MachineMain/car_History?factoryId=HL-T1HIST" class="nav-link">
+                                        <i class=" far fa-circle nav-icon"></i>
+                                        <p>發貨管理</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                    </ul>
+                 </nav>
+            </div>
+        </aside>
+        <div class="content-wrapper">
+            <div class="content">
+                <div class="container-fluid">
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        <footer class="main-footer">
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="{% static 'lib/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <!-- DataTables -->
+    <script src="{% static 'lib/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'lib/datatables-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'lib/datatables-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'lib/datatables-responsive/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'lib/datatables-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'lib/datatables-buttons/js/buttons.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'lib/datatables-fixedcolumns/js/fixedColumns.bootstrap4.min.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static 'js/adminlte.min.js' %}"></script>
+
+    
+    <script>
+        $(function () {
+            var url = window.location;
+            var account = "{{ account }}";
+            var sid = "{{ sid }}";
+            if (account == "") {
+                window.location.href = "{% url 'login_list' %}";  <!-- 根据你的URL配置指向登录列表的URL名称 -->
+            }
+            console.log("Session--" + account);
+    
+            // for single sidebar menu
+            $('ul.nav-sidebar a').filter(function () {
+                return this.href == url;
+            }).addClass('active');
+    
+            // for sidebar menu and treeview
+            $('ul.nav-treeview a').filter(function () {
+                return this.href == url;
+            }).parentsUntil(".nav-sidebar > .nav-treeview")
+                .css({ 'display': 'block' })
+                .addClass('menu-open').prev('a')
+                .addClass('active');
+        });
+    </script>
+    {% block scripts %}{% endblock %}  <!-- 其他頁面可以插入自己的JavaScript代碼 -->
+</body>
+</html>

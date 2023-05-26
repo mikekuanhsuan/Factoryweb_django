@@ -1,0 +1,507 @@
+
+{% extends 'base.html' %}
+{% block title %}
+    Mill_Report
+{% endblock %}
+{% block css %}
+<style>
+    .rotate-text {
+        writing-mode: vertical-rl;
+        letter-spacing: 5px; /* 調整這個值以增加間距 */
+        display: inline-block; /* 將文字設置為行內元素 */
+        vertical-align: middle; /* 垂直居中對齊 */
+    }
+</style>
+<style>
+    .table-container {
+  overflow: auto; /* 提供滾動欄位 */
+  max-height: 700px; /* 設置最大高度，根據需要進行調整 */
+}
+
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.table thead th {
+  background-color: #ffffff;
+  font-weight: bold;
+}
+
+.table tbody td {
+  padding: 10px;
+  text-align: center;
+  border: 1px solid #ccc;
+}
+
+.table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+  </style>
+
+{% endblock %}
+{% load static %}
+{% block content %}
+    <!-- 在这里填充页面特定内容 -->
+    <div class="row" id="charDiv" hidden>
+        <div class="col-12">
+            <div class="card w-auto mt-3">
+                <div class="card-header">
+                    <div class="row">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <h1>磨機日報 {{ menu }}</h1>
+    <div class="row">
+        <div class="col-12">
+            <div class="card w-auto">
+                <div class="card-header">
+                    <div class="row">
+                        <div>
+                            <button id="leftdate" style="background:transparent; border-width:0px; outline:none;"><i class="fas fa-caret-left"></i></button>
+                            <input id="day" type="date" value="{{ day }}" />
+                            <button id="rightdate" style="background:transparent; border-width:0px; outline:none;"><i class="fas fa-caret-right"></i></button>
+                            <button id="btn_excel" style="height:5px; background:transparent; border-width:0px; outline:none;"><img src="{% static 'images/excel.png' %}" /></button>
+                        </div>
+                        <div class="row m-1 mr-4" style="margin-left:5px">
+                            <label>磨機選擇:</label>
+                            <div style="margin-left:10px">
+                                <select id="millId">
+                                    {% for x in millId %}
+                                        {% if x == menu %}
+                                            <option value="{{ x }}" selected>{{ x }}</option>
+                                        {% else %}
+                                            <option value="{{ x }}">{{ x }}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="example2" class="table table-striped table-bordered table-hover text-center">
+                      
+                        <thead>
+                            <tr>
+                                <th rowspan="4" >時間</th>
+                                <th colspan="4">馬達</th>
+                                <th colspan="7">電流(AMP)</th>
+                                <th colspan="14">溫度℃</th>
+                                <th colspan="12">磨機馬達及軸承溫度℃</th>
+                                <th colspan="5">風壓(MMWG)</th>
+                                <th colspan="3">轉速(RPM)</th>
+                                <th colspan="6">{{ m11 }} 秤飼機</th>
+                                <th rowspan="4">添加劑飼料量</th>
+                                <th rowspan="4">產量</th>
+                                <th colspan="6">{{ m22 }} 秤飼機</th>
+                                <th rowspan="4">添加劑飼料量</th>
+                                <th rowspan="4">產量</th>
+                            </tr>
+                            <tr>
+                                <th colspan="2">電流</th>
+                                <th colspan="2">功率</th>
+                                <th rowspan="3">
+                                    <input type="checkbox" class="check" value="BucketElevatorA" /><br />
+                                    <div class="rotate-text">循環提運機</div>
+                                </th>
+                                <th rowspan="3"><input type="checkbox" class="check" value="BucketElevatorB" /><br /> 
+                                    <div class="rotate-text">入庫提運機</div>
+                                </th>
+                                <th colspan="2">O-SEPA</th>
+                                <th colspan="3">收塵排風機</th>
+                                <th colspan="4">耳軸承</th>
+                                <th colspan="4">潤滑油</th>
+                                <th colspan="4">磨機</th>
+                                <th rowspan="3"><input type="checkbox" class="check" value="TeSIn" /><br /> 風析機出口</th>
+                                <th rowspan="3"><input type="checkbox" class="check" value="TeProduct" /><br /> 成品入庫料溫</th>
+                                <th colspan="6">{{ m11 }}</th>
+                                <th colspan="6">{{ m22 }}</th>
+                                <th rowspan="2" colspan="2">磨機出口</th>
+                                <th rowspan="3"><input type="checkbox" class="check" value="WpOsepa" /><br /> 風析機出口</th>
+                                <th colspan="2">S系排風機</th>
+                                <th colspan="3">收塵排風機</th>
+                                <th colspan="3">熟料/爐石</th>
+                                <th colspan="3">石膏</th>
+                                <th colspan="3">熟料/爐石</th>
+                                <th colspan="3">石膏</th>
+                            </tr>
+                            <tr>
+                                <th>{{ m11 }}</th>
+                                <th>{{ m22 }}</th>
+                                <th>{{ m11 }}</th>
+                                <th>{{ m22 }}</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="OsepaCurrent" /><br /> A</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="OsepaRpm" /><br /> RPM</th>
+                                <th colspan="2">M</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="BagColletcotS" /><br /> S</th>
+                                <th colspan="2">{{ m11 }}</th>
+                                <th colspan="2">{{ m22 }}</th>
+                                <th colspan="2">{{ m11 }}</th>
+                                <th colspan="2">{{ m22 }}</th>
+                                <th colspan="2">{{ m11 }}</th>
+                                <th colspan="2">{{ m22 }}</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor1A" /><br /> 馬達線圈R</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor2A" /><br /> 馬達線圈S</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor3A" /><br /> 馬達線圈T</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor4A" /><br /> 負載端軸承</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor5A" /><br /> 無負載端軸承</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor6A" /><br /> 主減速機供油溫度</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor1B" /><br /> 
+                                    <div class="rotate-text">馬達線圈R</div>
+                                </th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor2B" /><br /> 馬達線圈S</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor3B" /><br /> 馬達線圈T</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor4B" /><br /> 負載端軸承</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor5B" /><br /> 無負載端軸承</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="TeMotor6B" /><br /> 主減速機供油溫度</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="WpBcSIn" /><br /> 入口</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="WpBcSDiff" /><br /> 壓差</th>
+                                <th colspan="2">M</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="RpmBcS" /><br /> S</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="WM1AP" /><br /> 飼量調節器</th>
+                                <th rowspan="1"><input type="checkbox" class="check" value="WM1AC" /><br /> 積數器</th>
+                                <th rowspan="1"><input type="checkbox" class="check" value="WM1AQ" /><br /> 飼料量</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="WM1BP" /><br /> 飼量調節器</th>
+                                <th rowspan="1"><input type="checkbox" class="check" value="WM1BC" /><br /> 積數器</th>
+                                <th rowspan="1"><input type="checkbox" class="check" value="WM1BQ" /><br /> 飼料量</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="WM2AP" /><br /> 飼量調節器</th>
+                                <th rowspan="1"><input type="checkbox" class="check" value="WM2AC" /><br /> 積數器</th>
+                                <th rowspan="1"><input type="checkbox" class="check" value="WM2AQ" /><br /> 飼料量</th>
+                                <th rowspan="2"><input type="checkbox" class="check" value="WM2BP" /><br /> 飼量調節器</th>
+                                <th rowspan="1"><input type="checkbox" class="check" value="WM2BC" /><br /> 積數器</th>
+                                <th rowspan="1"><input type="checkbox" class="check" value="WM2BQ" /><br /> 飼料量</th>
+                            </tr>
+                            <tr>
+                                <th><input type="checkbox" class="check" value="MotorCurrentA" /><br /> A</th>
+                                <th><input type="checkbox" class="check" value="MotorCurrentB" /><br /> A</th>
+                                <th><input type="checkbox" class="check" value="MotorPowerKwA" /><br /> KW</th>
+                                <th><input type="checkbox" class="check" value="MotorPowerKwB" /><br /> KW</th>
+                                <th><input type="checkbox" class="check" value="BagColletcotM1" /><br /> {{ m11 }}</th>
+                                <th><input type="checkbox" class="check" value="BagColletcotM2" /><br /> {{ m22 }}</th>
+                                <th><input type="checkbox" class="check" value="TeMillBearingInA" /><br /> 
+                                    <div class="rotate-text">入口端</div>
+                                </th>
+                                <th><input type="checkbox" class="check" value="TeMillBearingOutA" /><br /> 
+                                    <div class="rotate-text">出口端</div>
+                                </th>
+                                <th><input type="checkbox" class="check" value="TeMillBearingOilInA" /><br /> 
+                                    <div class="rotate-text">入口端</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillBearingOilOutA" /><br />
+                                    <div class="rotate-text">出口端</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillBearingInB" /><br />
+                                    <div class="rotate-text">入口端</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillBearingOutB" /><br />
+                                    <div class="rotate-text">出口端</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillBearingOilInB" /><br />
+                                    <div class="rotate-text">入口端</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillBearingOilOutB" /><br />
+                                    <div class="rotate-text">出口端</div>
+
+
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillRawA" /><br />
+                                    <div class="rotate-text">料溫</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillAirA" /><br />
+                                    <div class="rotate-text">氣溫</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillRawB" /><br />
+                                    <div class="rotate-text">料溫</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="TeMillAirB" /><br />
+                                    <div class="rotate-text">氣溫</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="WpMillA" /><br />
+                                    <div class="rotate-text">{{ m11 }}</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="WpMillB" /><br />
+                                    <div class="rotate-text">{{ m22 }}</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="RpmBcM1" /><br />
+                                    <div class="rotate-text">{{ m11 }}</div>
+                                </th>
+                                <th>
+                                    <input type="checkbox" class="check" value="RpmBcM2" /><br />
+                                    <div class="rotate-text">{{ m22 }}</div>
+                                </th>
+                                <th colspan="2">(T/H)</th>
+                                <th colspan="2">(T/H)</th>
+                                <th colspan="2">(T/H)</th>
+                                <th colspan="2">(T/H)</th>
+                            </tr>
+
+                        </thead>
+                        <tbody id="myTbody">
+                            {% for item in data %}
+                             
+                                <tr>
+                                    <td>{{ item.dtime }}</td>
+                                    <td>{{ item.motor_current_a|floatformat:2 }}</td>
+                                    <td>{{ item.motor_current_b|floatformat:2 }}</td>
+                                    <td>{{ item.motor_powerkw_a|floatformat:2 }}</td>
+                                    <td>{{ item.motor_powerkw_b|floatformat:2 }}</td>
+                                    <td>{{ item.bucket_elevator_a|floatformat:2 }}</td>
+                                    <td>{{ item.bucket_elevator_b|default:"0"|floatformat:2 }}</td>
+                                    <!-- And so on for the rest of your fields... -->
+                                    <td>{{ item.osepa_current|floatformat:2 }}</td>
+                                    <td>{{ item.osepa_rpm|floatformat:2 }}</td>
+                                    <td>{{ item.bag_colletcot_m1|floatformat:2 }}</td>
+                                    <td>{{ item.bag_colletcot_m2|floatformat:2 }}</td>
+                                    <td>{{ item.bag_colletcot_s|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_bearing_in_a|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_bearing_out_a|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_bearing_oil_in_a|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_bearing_oil_out_a|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_bearing_in_b|default:"0"|floatformat:2 }}</td>
+
+                                    <td>{{ item.te_mill_bearing_out_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_bearing_oil_in_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_bearing_oil_out_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_raw_a|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_air_a|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_raw_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_mill_air_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_s_in|default:"0"|floatformat:2 }}</td>
+
+                                    <td>{{ item.te_product|default:"0"|floatformat:2 }}</td>
+
+                                    <td>{{ item.te_motor_1_a|default:"0"|floatformat:2 }}</td>
+
+                                    <td>{{ item.te_motor_2_a|default:"0"|floatformat:2 }}</td>
+
+                                    <td>{{ item.te_motor_3_a|default:"0"|floatformat:2 }}</td>
+
+                                    <td>{{ item.te_motor_4_a|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_motor_5_a|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_motor_6_a|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_motor_1_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_motor_2_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_motor_3_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_motor_4_b|default:"0"|floatformat:2 }}</td>
+
+
+                                    <td>{{ item.te_motor_5_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.te_motor_6_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.wp_mill_a|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.wp_mill_b|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.wp_osepa|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.wp_bc_s_in|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.wp_bc_s_diff|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.rpm_bc_m1|default:"0"|floatformat:2 }}</td>
+
+                                    <td>{{ item.rpm_bc_m2|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.rpm_bc_s|default:"0"|floatformat:2 }}</td>
+
+
+                                    <td>{{ item.w_m1_a_p|default:"0"|floatformat:2 }}</td>
+                                    
+                                    <td>{{ item.w_m1_a_c|default:"0"|floatformat:2 }}</td>
+                                    
+
+
+
+                                    <td>{{ item.w_m1_a_q|default:"0"|floatformat:2 }}</td> 
+
+
+
+                                    
+                                    <td>{{ item.w_m1_b_p|default:"0"|floatformat:2 }}</td>
+
+
+                                    <td>{{ item.w_m1_b_c|default:"0"|floatformat:2 }}</td>
+
+
+                                    <td>{{ item.w_m1_b_q|default:"0"|floatformat:2 }}</td>
+
+
+                                    
+                                    <td>{{ 0 }}</td>
+                                    {% load my_filters %}
+                                    <td>{{ item.w_m1_a_q|smart_floatformat:item.w_m1_b_q|floatformat:2 }}</td>
+
+
+                                    <td>{{ item.w_m2_a_p|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.w_m2_a_c|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.w_m2_a_q|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.w_m2_b_p|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.w_m2_b_c|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ item.w_m2_b_q|default:"0"|floatformat:2 }}</td>
+                                    <td>{{ 0 }}</td>
+                                    {% load my_filters %}
+                                    <td>{{ item.w_m2_a_q|smart_floatformat:item.w_m2_b_q|floatformat:2 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+    
+            </div>
+        </div>
+    </div>
+    <script>
+        window.addEventListener('DOMContentLoaded', function() {
+        var tableContainer = document.querySelector('.table-container');
+        var tableHead = document.querySelector('.table thead');
+
+        tableContainer.addEventListener('scroll', function() {
+            tableHead.style.position = 'sticky';
+            tableHead.style.top = '0';
+            tableHead.style.background = '#f0f0f0';
+            tableHead.style.zIndex = '1';
+        });
+
+        function setTableContainerHeight() {
+            var windowHeight = window.innerHeight; // 取得視窗高度
+            var maxTableHeight = windowHeight * 0.8; // 計算最大高度為視窗高度的 80%
+            tableContainer.style.maxHeight = maxTableHeight + 'px';
+        }
+
+        setTableContainerHeight(); // 初始化設置表格容器的高度
+        window.addEventListener('resize', setTableContainerHeight); // 監聽視窗大小變化事件，動態調整表格容器的高度
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/stock.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+
+
+    <script>
+        
+        $(function () {
+            $("#example2").DataTable({
+                "paging": false,
+                "lengthChange": false,
+                "searching": false,
+                "ordering": false,
+                "info": true,
+                "autoWidth": true,
+                "responsive": false,
+                "fixedHeader": true,
+                "scrollCollapse": true,
+                "scrollY": "39vh",
+                "scrollX": true,
+                fixedColumns:
+                {
+                    leftColumns: 1,
+                },
+            });
+        });
+        
+        // Set global options first
+        Highcharts.setOptions({
+            time: {
+                useUTC: false
+            }
+        });
+
+        var chart = Highcharts.stockChart('container', {
+            accessibility: {
+                enabled: false // disable accessibility to remove the warning
+            },
+            tooltip: {
+                formatter: function () {
+                    var point = this.points[0];
+                    var s = '<b>' + Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', point.x) + '</b>';
+
+                    for (var i = 0; i < this.points.length; i++) {
+                        var point = this.points[i];
+                        s += '<br/><span style="color:' + point.series.color + '">\u25CF</span>' + point.series.name + ': ' + point.y.toFixed(2);
+                    }
+
+                    return s;
+                },
+                shared: true
+            },
+            title: {
+                //text: 'U.S Solar Employment Growth by Job Category, 2010-2020',
+            },
+            yAxis: {
+                plotLines: [{
+                    width: 0.5,
+                    color: 'silver'
+                }],
+            },
+            xAxis: {
+                type: 'datetime',
+            },
+            rangeSelector: {
+                buttons: [{
+                    type: 'hour',
+                    count: 1,
+                    text: '1h'
+                }, {
+                    type: 'all',
+                    count: 1,
+                    text: 'All'
+                }],
+                selected: 1,
+                inputEnabled: false
+            },
+        });
+
+        
+        $("input[class=check]").click(function () {
+            console.log("Click event triggered!");  // 输出调试信息
+            
+            var val = $(this).val();
+            var input = $(this).is(":checked");
+            var millId = $("#millId").val();
+            var day = $("#day").val();
+
+            $("#charDiv").prop("hidden", false);
+
+            var name;
+            switch (val) {
+                // Add cases for each value here
+            }
+            console.log("JOJO")
+            var factoryId = "{{ factory }}";
+            var day = "{{ day }}";
+            var millId = "{{ menu }}";
+            
+            $.ajax({
+                    url: "{% url 'Mill_ChartList' %}",
+                    type: "POST",
+                    headers: { "X-CSRFToken": "{{ csrf_token }}" },
+                    data: { "check": val, "m": millId, "f": factoryId, "day": day },
+                    dataType: "JSON",
+                    success: function(response) {
+                        // 處理回應
+                    },
+                    error: function(xhr, status, error) {
+                        // 處理錯誤
+                    }
+                });
+              
+        });
+    </script>
+  
+
+        
+{% endblock %}
